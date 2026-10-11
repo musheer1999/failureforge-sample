@@ -15,7 +15,7 @@ public final class Pricing {
 	 * @param member          whether the customer is a loyalty member (no member benefit yet)
 	 * @return the price after discount, never negative
 	 */
-	public static long finalPrice(long pricePaise, int discountPercent, boolean member) {
+	public static long priceAfterDiscount(long pricePaise, int discountPercent, boolean member) {
 		if (pricePaise < 0) {
 			throw new IllegalArgumentException("price must not be negative: " + pricePaise);
 		}
