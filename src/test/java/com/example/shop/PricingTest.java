@@ -31,4 +31,14 @@ class PricingTest {
 	void rejectsDiscountOverHundred() {
 		assertThrows(IllegalArgumentException.class, () -> Pricing.finalPrice(50_000, 150, false));
 	}
+
+	@Test
+	void memberGetsExtraFivePercent() {
+		assertEquals(42_500, Pricing.finalPrice(50_000, 10, true));
+	}
+
+	@Test
+	void memberWithoutCouponStillGetsFivePercent() {
+		assertEquals(47_500, Pricing.finalPrice(50_000, 0, true));
+	}
 }
