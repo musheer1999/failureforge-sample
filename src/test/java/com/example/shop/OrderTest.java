@@ -26,4 +26,13 @@ class OrderTest {
 		order.cancel();
 		assertEquals(Order.Status.CANCELLED, order.status());
 	}
+
+	@Test
+	void cancelledPaidOrderCanBeRefunded() {
+		Order order = new Order(50_000);
+		order.pay();
+		order.cancel();
+		assertEquals(50_000, order.refund());
+		assertEquals(50_000, order.refundedPaise());
+	}
 }

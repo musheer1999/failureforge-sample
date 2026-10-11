@@ -2,7 +2,7 @@ package com.example.shop;
 
 /**
  * An order's payment life cycle: NEW -> PAID -> REFUNDED, or NEW/PAID -> CANCELLED.
- * Amounts are in paise.
+ * A paid order that is cancelled can still be refunded (SHOP-43). Amounts are in paise.
  */
 public final class Order {
 
@@ -12,6 +12,7 @@ public final class Order {
 
 	private final long amountPaise;
 	private Status status = Status.NEW;
+	private boolean paid;
 	private long refundedPaise;
 
 	public Order(long amountPaise) {
@@ -26,6 +27,7 @@ public final class Order {
 			throw new IllegalStateException("can only pay a new order, not " + status);
 		}
 		status = Status.PAID;
+		paid = true;
 	}
 
 	public void cancel() {
@@ -35,12 +37,15 @@ public final class Order {
 		status = Status.CANCELLED;
 	}
 
-	/** Refunds the full amount of a paid order. @return the amount refunded now */
+	/** Refunds the full amount of a paid order, also after it was cancelled. @return the amount refunded now */
 	public long refund() {
-		if (status != Status.PAID) {
+		boolean refundable = status == Status.PAID || (status == Status.CANCELLED && paid);
+		if (!refundable) {
 			throw new IllegalStateException("can only refund a paid order, not " + status);
 		}
-		status = Status.REFUNDED;
+		if (status == Status.PAID) {
+			status = Status.REFUNDED;
+		}
 		refundedPaise += amountPaise;
 		return amountPaise;
 	}
